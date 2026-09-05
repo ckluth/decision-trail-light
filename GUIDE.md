@@ -1,96 +1,174 @@
-# Adopting decision-trail-light in a new repo
+# A guide to working decision-trail-light
 
-Audience: an AI coding agent (or a human) about to adopt this workflow into a
-target repository, on request from its owner. Read this fully before writing
-anything into the target repo.
+This is the human-facing tour: what the method is for, why it's shaped the
+way it is, and how it feels to actually use it day to day. If you already
+know all this and just want the mechanical steps for installing it in a
+repo, that's [`adopting.md`](adopting.md). The terse reference an agent
+reloads every session is [`template\AGENTS.md`](template/AGENTS.md).
 
-## 1. Confirm the shape the user wants
+## The problem it solves
 
-This template assumes the **flat** variant — everything under `docs\adr\` and
-`docs\plans\`, no per-feature/per-PBI grouping. If the target project is
-large enough that flat numbering will get unwieldy (many unrelated workstreams
-sharing one `docs\adr\` sequence), say so and ask whether they'd rather nest
-by feature/PBI instead (see "Provenance" below for the heavier variant this
-was distilled from). Otherwise, proceed with flat.
+A few weeks into any project you stop remembering *why*. Not what the code
+does — that's readable — but why it's shaped that way instead of the three
+other reasonable ways. Why this library and not that one. Why the retry
+logic gives up after three attempts and not five. The reasoning lived in a
+chat window, or a Slack thread, or someone's head, and now it's gone.
 
-Also confirm before writing:
+Then someone (maybe you, six months later; maybe an agent, thirty seconds
+later) "fixes" the retry count back to five, because five looks more
+correct and nothing on disk says otherwise.
 
-- **Numbering scheme** — default is a global sequence per folder (`ADR-01,
-  ADR-02, ...`; `plan-01, plan-02, ...`, independent of each other). This is
-  almost always what's wanted; only ask if the user has hinted otherwise.
-- **`docs\prompts\`** — optional and informal (a place to save a longer
-  starter prompt as a file and point to it, instead of pasting it inline).
-  Include it by default; drop it only if the user explicitly doesn't want it.
-- **`docs\travel-diary.md`** — optional and guard-free (a running,
-  dated continuity log, unrelated to ADR/Plan status). Include the
-  `travel-diary` skill by default; it costs nothing since it's only used on
-  explicit request.
+decision-trail-light is a small habit that keeps that reasoning where the
+code lives: a short, dated, append-only record of decisions and the plans
+that carried them out, sitting next to the source in `docs\`.
 
-## 2. Files to place in the target repo
+## Why light
 
-Copy from `template\` in this repo, preserving relative paths:
+If you've seen the fuller `decision-trail` method this was distilled from,
+you'll notice a lot is missing on purpose: no idea
+stage before a decision, no per-PBI or per-feature folders, no `overview.md`
+digest, no companion artifact folders, no tags. That's not an oversight —
+it's the actual point of this variant.
 
-| Source | Target | Handling |
-| --- | --- | --- |
-| `template\AGENTS.md` | `AGENTS.md` (repo root) | Copy verbatim, then replace the `<Project Name>` title (first line) with the target repo's actual name. Nothing else needs changing — the rest is repo-agnostic. |
-| `template\.gitignore` | `.gitignore` (repo root) | Only if the target repo doesn't already have one. Standard [GitHub Visual Studio `.gitignore`](https://github.com/github/gitignore/blob/main/VisualStudio.gitignore) — copy verbatim. If one already exists, leave it as-is (or offer to merge, if asked). |
-| `template\ARCHITECTURE.md` | `ARCHITECTURE.md` (repo root) | Only if the target repo doesn't already have one. Replace `<Project Name>` and `<YYYY-MM-DD>`, then fill in (or explicitly state "nothing built yet" for) the Overview/Components/Key conventions sections based on the target repo's actual current state. |
-| `template\.github\copilot-instructions.md` | `.github\copilot-instructions.md` | Only if the target repo doesn't already have one (see step 3 if it does). Replace `<Project Name>` and every bracketed placeholder with real content reflecting the target codebase — build/test/lint commands, a short architecture summary, key conventions — before appending the "Working method" section as-is. |
-| `template\.github\skills\decision-trail-adr\SKILL.md` | `.github\skills\decision-trail-adr\SKILL.md` | Copy verbatim, unmodified. |
-| `template\.github\skills\decision-trail-plan\SKILL.md` | `.github\skills\decision-trail-plan\SKILL.md` | Copy verbatim, unmodified. |
-| `template\.github\skills\decision-trail-correction\SKILL.md` | `.github\skills\decision-trail-correction\SKILL.md` | Copy verbatim, unmodified. |
-| `template\.github\skills\finalize-session\SKILL.md` | `.github\skills\finalize-session\SKILL.md` | Copy verbatim, unmodified. |
-| `template\.github\skills\travel-diary\SKILL.md` | `.github\skills\travel-diary\SKILL.md` | Copy verbatim, unmodified. |
+The full method is built for a codebase with a sustained team and a backlog
+system feeding it a stream of discrete work items; the folder-per-PBI
+structure and the overview digest earn their cost there. Most projects
+aren't that yet, or never will be. decision-trail-light keeps the two ideas
+that pay for themselves almost immediately — write the decision down before
+you act on it, write down what you actually did — and drops everything
+whose cost only makes sense at larger scale. You can always graduate later
+(see the note at the bottom of [`adopting.md`](adopting.md)); you don't pay
+for it up front.
 
-Also ensure `docs\adr\`, `docs\plans\`, and (if wanted) `docs\prompts\` exist
-in the target repo. Git doesn't track empty folders — it's fine to only
-create them the first time a file is actually written into one; don't add
-placeholder `.gitkeep` files unless the user asks for the folders to be
-visible/tracked before that.
+## The lifecycle: how a thought travels
 
-## 3. If the target repo already has some of these files
+Say you're adding a dark-mode toggle. Someone asks for it in a sentence.
+That sentence is a **prompt** — worth keeping if it took real back-and-forth
+to pin down, safe to skip if it's genuinely a one-liner. Either way, before
+anything gets built, the actual decision gets written down as an **ADR**:
+which approach (CSS custom properties vs. a theme-context object vs. a
+class toggle), and — this is the part people skip and shouldn't — what you
+*didn't* pick and why. "We didn't use a theme-context object because this
+app has no other cross-cutting UI state and it would be the first" is a
+sentence that saves someone a rediscovery later.
 
-Never silently overwrite an existing `AGENTS.md`, `ARCHITECTURE.md`, or
-`.github\copilot-instructions.md`. Instead:
+The ADR starts life with the heading `## Proposed decision` and status
+`Proposed`. Once you (or whoever's judging it) actually agree with it, the
+heading is renamed to `## Decision` and the status flips to `Accepted` — the
+heading always tracks the status, so a reader scanning just the outline
+knows where things stand without checking the frontmatter. If it's turned
+down instead, it becomes `Rejected` and stays that way; rejected ideas are
+kept, not deleted, because "we already tried that" is exactly the kind of
+fact this whole method exists to preserve.
 
-- **Existing `AGENTS.md`** — show the user the "How we work" section from the
-  template and ask whether to append it (as a new top-level section) or merge
-  it with what's already there.
-- **Existing `ARCHITECTURE.md`** — leave its content untouched; just confirm
-  it has a `Last updated` line, and reference it from
-  `copilot-instructions.md` as the source of truth.
-- **Existing `copilot-instructions.md`** — leave the project-specific content
-  (build/test/architecture) as-is; append the "Working method" section from
-  the template so future sessions know about `AGENTS.md` and the skills.
+Once accepted, a **Plan** breaks the decision into the concrete steps taken
+to build it — not a task tracker, just a short record of what was actually
+done, so the ADR doesn't have to also describe the implementation.
 
-Skills (`.github\skills\*`) are project-agnostic and safe to add outright; if
-a skill of the same name already exists and differs, ask before replacing it.
+```mermaid
+flowchart LR
+    P[prompt: add dark mode] --> A[ADR: CSS custom properties]
+    A -->|Accepted| PL[Plan: add tokens, wire toggle]
+```
 
-## 4. After copying
+That's the whole loop. Most sessions are just this, over and over: a
+request comes in, an ADR captures the call, a Plan captures the work.
 
-- Sweep for any leftover `<...>` placeholder tokens and confirm none remain.
-- Sanity-check the cross-references still make sense: `AGENTS.md` names the
-  five skills, `copilot-instructions.md` points at `AGENTS.md` and
-  `ARCHITECTURE.md`.
-- Tell the user the workflow is installed and ready. A natural first real use
-  is turning their next non-trivial request straight into an ADR.
+## When a decision needs to change
 
-## Provenance
+Software decisions aren't permanent, and the method doesn't pretend they
+are. Three ways an ADR's story continues:
 
-This template was distilled from an internal `job-system` repo's heavier,
-per-PBI decision-trail-light setup, which nests ADRs/Plans under
-`docs\pbi-<nnnn>-<slug>\` (or `docs\feature-<nnnn>-<slug>\pbi-<nnnn>-<slug>\`
-for cross-cutting work), numbers `NN` independently *within* each PBI's own
-`adr\`/`plans\` folder, and includes a `finalize-pbi` skill that produces a
-structured closing report (`final-summary.md`) for a specific backlog item.
+- **Amends** — you're refining the same decision, not reversing it (e.g.
+  tightening the retry count from five to three). The original ADR gets an
+  `Amended by:` note pointing at the new one; the new one gets `Amends:`
+  pointing back. Status doesn't change — the original is still the accepted
+  decision, just refined.
+- **Supersedes** — you're replacing the decision outright (dark mode moves
+  from CSS custom properties to a theme-context object after all, because a
+  second cross-cutting concern showed up). The old ADR's status becomes
+  `Superseded`, with `Superseded by:` pointing at the new one, which carries
+  `Supersedes:` pointing back. Both stay on disk; the old one just isn't the
+  live answer anymore.
+- **Deprecated** — the decision no longer applies and nothing replaces it
+  (the feature it supported got removed). Status becomes `Deprecated`, no
+  paired link needed.
 
-This flattened variant removes PBI/feature grouping entirely — everything
-lives directly under `docs\adr\` and `docs\plans\`, numbered as one global
-sequence per folder — and renames `finalize-pbi` to `finalize-session`,
-refocused on an informal summary plus keeping `ARCHITECTURE.md` current,
-rather than a formal per-PBI closing document. If a target project later
-grows enough workstreams that flat numbering becomes unwieldy, migrating to
-the nested PBI/feature variant is a reasonable escalation — reintroduce
-`docs\pbi-<nnnn>-<slug>\adr\`/`plans\` subfolders and restore a PBI-scoped
-finalize skill at that point, rather than trying to shoehorn grouping into
-the flat layout.
+`Proposed`, `Rejected`, `Superseded`, and `Deprecated` are all terminal for
+that document — once there, an ADR doesn't reopen. If the same question
+comes back up, that's a new ADR that references the old one.
+
+## The lighter escape hatch: correcting settled work
+
+Sometimes you don't want a whole new ADR — you made a small, uncontroversial
+factual slip (wrong file path, a typo in a decision that doesn't change its
+meaning) and formally superseding it would be theater. That's what the
+`decision-trail-correction` skill is for: a narrow, logged edit to something
+already `Accepted`, used sparingly and only for corrections that don't
+change what was actually decided. If there's any real judgment call
+involved, that's an amendment or a new ADR instead, not a correction.
+
+## The travel diary
+
+Everything above is deliberate and gated — an ADR only gets written when a
+real decision is being made, a Plan only when work is actually happening.
+Sometimes you want something looser: a quick note about where you left off,
+a thing you tried that didn't pan out and don't want to reinvestigate, a
+"remember to look at X next." Nothing here rises to the level of a decision
+worth an ADR, but it'd still be a shame to lose.
+
+That's `docs\travel-diary.md` — a single running file, newest entry at the
+top, no status, no lifecycle, no precondition to satisfy before writing.
+Just ask, at any point, mid-work or not, and a dated entry gets prepended.
+Try it — you'll love it. It's the lowest-friction habit in this whole
+method, and often the one that ends up used the most.
+
+## Finalizing a session
+
+At a natural stopping point — a decision's been carried out, the loose ends
+are tied off — the `finalize-session` skill writes a brief, informal closing
+note and makes sure `ARCHITECTURE.md` still reflects reality. It only fires
+when the ADRs and Plans touched in the session are actually settled
+(nothing left `Proposed` or mid-Plan); if something's still open, it'll say
+so instead of pretending to close the loop. Keeping `ARCHITECTURE.md`
+current is the real point — the closing note is secondary.
+
+## Working with an agent
+
+**It's a conversation, not a command line.** You don't need to know the
+skill names or invoke anything explicitly. Just talk about the work the way
+you normally would — "let's add dark mode," "actually let's use a
+theme-context object instead" — and the agent recognizes when a decision,
+plan, correction, or diary entry is warranted and reaches for the right
+skill on its own. The skills exist so the agent behaves consistently, not so
+you have a new syntax to learn.
+
+**A "yes" has a scope.** When an agent proposes a decision and you say
+"yes," you're agreeing to *that* ADR — the approach and the stated
+trade-offs — not signing a blank check for whatever gets built afterward.
+It's entirely normal, and expected, to look at the resulting Plan and say
+"wait, that's not what I meant," and have it corrected or superseded. The
+paper trail exists precisely so disagreements like that are cheap to have
+and cheap to resolve.
+
+**Resuming is cheap.** Coming back to a project after a break — or handing
+it to a different agent entirely — doesn't require re-explaining anything.
+`AGENTS.md` says how the project works; `ARCHITECTURE.md` says what exists;
+the ADRs say why it's shaped that way; the travel diary says where things
+were left. A new session can read those four things and be caught up in
+minutes, not by asking you to remember.
+
+## How to start
+
+If you're setting this up in a new or existing repo, the mechanical
+steps — which files go where, how to handle a repo that already has some of
+them — are in [`adopting.md`](adopting.md). Point your agent at this repo
+and that file, and it can do the copying itself.
+
+## Where to go next
+
+- [`template\AGENTS.md`](template/AGENTS.md) — the terse method reference
+  that lives in every adopting repo.
+- [`template\.github\skills\`](template/.github/skills/) — the five skills
+  themselves, if you want to read exactly what each one does.
+- [`adopting.md`](adopting.md) — installing this in a repo, step by step.
