@@ -29,6 +29,7 @@ Copy from `template\` in this repo, preserving relative paths:
 | Source | Target | Handling |
 | --- | --- | --- |
 | `template\AGENTS.md` | `AGENTS.md` (repo root) | Copy verbatim, then replace the `<Project Name>` title (first line) with the target repo's actual name. Nothing else needs changing — the rest is repo-agnostic. |
+| `template\.gitignore` | `.gitignore` (repo root) | Only if the target repo doesn't already have one. Standard [GitHub Visual Studio `.gitignore`](https://github.com/github/gitignore/blob/main/VisualStudio.gitignore) — copy verbatim. If one already exists, leave it as-is (or offer to merge, if asked). |
 | `template\ARCHITECTURE.md` | `ARCHITECTURE.md` (repo root) | Only if the target repo doesn't already have one. Replace `<Project Name>` and `<YYYY-MM-DD>`, then fill in (or explicitly state "nothing built yet" for) the Overview/Components/Key conventions sections based on the target repo's actual current state. |
 | `template\.github\copilot-instructions.md` | `.github\copilot-instructions.md` | Only if the target repo doesn't already have one (see step 3 if it does). Replace `<Project Name>` and every bracketed placeholder with real content reflecting the target codebase — build/test/lint commands, a short architecture summary, key conventions — before appending the "Working method" section as-is. |
 | `template\.github\skills\decision-trail-adr\SKILL.md` | `.github\skills\decision-trail-adr\SKILL.md` | Copy verbatim, unmodified. |
