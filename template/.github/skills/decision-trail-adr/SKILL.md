@@ -19,6 +19,12 @@ zero-padded, sequential **across the whole folder**, starting at `01` — pick
 the next free number (`max(existing) + 1`), never reuse or derive it from a
 Plan's number.
 
+**Number-collision guard.** Before writing, re-enumerate `docs\adr\` and
+verify the chosen filename isn't already in use — protects against a stale
+listing or a number picked from memory/an earlier turn. If it collides
+(e.g. a concurrent write since you last listed the folder), take the next
+free number instead; never overwrite an existing ADR by reusing its number.
+
 ## Template
 
 ```markdown

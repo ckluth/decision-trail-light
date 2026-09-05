@@ -19,8 +19,9 @@ repo plus `GUIDE.md` and ask it to adopt the workflow into your project.
 - **`template\ARCHITECTURE.md`** — architecture-doc stub.
 - **`template\.github\copilot-instructions.md`** — Copilot entry-point
   template.
-- **`template\.github\skills\`** — the four skills: `decision-trail-adr`,
-  `decision-trail-plan`, `decision-trail-correction`, `finalize-session`.
+- **`template\.github\skills\`** — the five skills: `decision-trail-adr`,
+  `decision-trail-plan`, `decision-trail-correction`, `finalize-session`,
+  `travel-diary`.
 
 ## The method, in one paragraph
 

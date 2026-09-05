@@ -21,6 +21,10 @@ Also confirm before writing:
 - **`docs\prompts\`** — optional and informal (a place to save a longer
   starter prompt as a file and point to it, instead of pasting it inline).
   Include it by default; drop it only if the user explicitly doesn't want it.
+- **`docs\travel-diary.md`** — optional and guard-free (a running,
+  dated continuity log, unrelated to ADR/Plan status). Include the
+  `travel-diary` skill by default; it costs nothing since it's only used on
+  explicit request.
 
 ## 2. Files to place in the target repo
 
@@ -36,6 +40,7 @@ Copy from `template\` in this repo, preserving relative paths:
 | `template\.github\skills\decision-trail-plan\SKILL.md` | `.github\skills\decision-trail-plan\SKILL.md` | Copy verbatim, unmodified. |
 | `template\.github\skills\decision-trail-correction\SKILL.md` | `.github\skills\decision-trail-correction\SKILL.md` | Copy verbatim, unmodified. |
 | `template\.github\skills\finalize-session\SKILL.md` | `.github\skills\finalize-session\SKILL.md` | Copy verbatim, unmodified. |
+| `template\.github\skills\travel-diary\SKILL.md` | `.github\skills\travel-diary\SKILL.md` | Copy verbatim, unmodified. |
 
 Also ensure `docs\adr\`, `docs\plans\`, and (if wanted) `docs\prompts\` exist
 in the target repo. Git doesn't track empty folders — it's fine to only
@@ -65,7 +70,7 @@ a skill of the same name already exists and differs, ask before replacing it.
 
 - Sweep for any leftover `<...>` placeholder tokens and confirm none remain.
 - Sanity-check the cross-references still make sense: `AGENTS.md` names the
-  four skills, `copilot-instructions.md` points at `AGENTS.md` and
+  five skills, `copilot-instructions.md` points at `AGENTS.md` and
   `ARCHITECTURE.md`.
 - Tell the user the workflow is installed and ready. A natural first real use
   is turning their next non-trivial request straight into an ADR.

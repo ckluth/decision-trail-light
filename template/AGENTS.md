@@ -5,8 +5,9 @@
 Non-trivial work is carried **prompt → ADR → Plan**, in plain markdown under
 `docs\`. This is a light, repo-local method — a deliberately-shrunk relative of
 [decision-trail](https://github.com/haevg-rz/decision-trail), keeping only what
-earns its overhead: an **ADR**, an **Implementation Plan**, and the
-**confirmation guard** below. No idea files, no derived index, no travel diary.
+earns its overhead: an **ADR**, an **Implementation Plan**, a lightweight
+**travel diary**, and the **confirmation guard** below. No idea files, no
+derived index, no companion-artifact folders, no versioned update path.
 
 - **A prompt that asks for a decision goes straight to an ADR.** There is no
   separate "idea" artifact — if the user demands a decision, write the ADR
@@ -23,6 +24,8 @@ earns its overhead: an **ADR**, an **Implementation Plan**, and the
     when the user explicitly demands it instead of a full amending ADR.
   - **`finalize-session`** — closing out a session's work: a brief, informal
     derived summary, plus keeping `ARCHITECTURE.md` up to date (the main goal).
+  - **`travel-diary`** — a guard-free, dated continuity log for handing a
+    session off to the next one, independent of ADR/Plan status.
 
 ### `docs\` layout
 
@@ -34,6 +37,7 @@ docs\
     adr\ADR-NN-<slug>.md
     plans\plan-NN-<slug>.md
     prompts\<slug>.md        (optional, informal — see below)
+    travel-diary.md          (optional, guard-free — see below)
 ```
 
 `NN` is a zero-padded, **global** sequence per folder (`docs\adr\`,
@@ -47,6 +51,12 @@ instead save a longer starter prompt as `docs\prompts\<slug>.md` and point to
 that file. In most cases the goal is still to turn it into a clean ADR — but a
 starter prompt may also be a quick side-task with no decision-trail overhead
 at all; don't force one where the user didn't ask for it.
+
+`docs\travel-diary.md` is guard-free and optional: use the `travel-diary`
+skill to prepend a dated chapter — where we are / what we achieved / what is
+left / what is next — whenever the user explicitly asks to log progress. It
+needs no confirmation guard and no settled ADR/Plan status; it exists purely
+for cheap, session-to-session continuity, even mid-work.
 
 ### Confirmation guard
 

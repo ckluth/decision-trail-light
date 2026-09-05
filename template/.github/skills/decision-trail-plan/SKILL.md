@@ -41,6 +41,12 @@ zero-padded, sequential **across the whole folder**, independent of the ADR's
 own numbering — a plan implementing `ADR-03` is not necessarily `plan-03`.
 Pick the next free number (`max(existing) + 1`) in `docs\plans\`.
 
+**Number-collision guard.** Before writing, re-enumerate `docs\plans\` and
+verify the chosen filename isn't already in use — protects against a stale
+listing or a number picked from memory/an earlier turn. If it collides,
+take the next free number instead; never overwrite an existing plan by
+reusing its number.
+
 ## Template
 
 ```markdown

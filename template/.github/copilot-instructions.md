@@ -38,6 +38,8 @@ summary:
   explicitly asks for a patch instead of a full amending ADR.
 - **`finalize-session`** — closing out a session: a brief informal summary,
   plus reconciling `ARCHITECTURE.md` (the main goal of finalizing).
+- **`travel-diary`** — a guard-free, dated continuity log for handing a
+  session off to the next one, independent of ADR/Plan status.
 
 `ARCHITECTURE.md` at the repo root is the authoritative architecture
 reference — keep it in sync with any change that affects a statement it
