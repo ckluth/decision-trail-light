@@ -27,6 +27,9 @@ Plan's number.
 - Status: Proposed
 - Date: <YYYY-MM-DD>
 - Amends: <ADR-NN, if any — omit line otherwise>
+- Amended by: <ADR-NN, if any — omit line otherwise>
+- Supersedes: <ADR-NN, if any — omit line otherwise>
+- Superseded by: <ADR-NN, if any — omit line otherwise>
 
 ## Context
 
@@ -34,11 +37,12 @@ Plan's number.
 summarize the prompt's intent here (or point at the saved file in
 docs\prompts\, if the user saved one) — no separate idea file is written.>
 
-## Decision
+## Proposed decision
 
 <What was decided. Add "## Decision Drivers" / "## Considered Options"
 sections above this one only when weighing real alternatives — skip them for
-a straightforward call.>
+a straightforward call. Rename this heading to "## Decision" the moment
+`Status` flips to `Accepted` — see "Heading tracks status" below.>
 
 ## Consequences
 
@@ -56,14 +60,40 @@ a straightforward call.>
 
 - **Title line and filename slot must agree** (`ADR-03: ...` lives in
   `ADR-03-...md`).
-- `Status` is one of `Proposed`, `Accepted`, `Rejected`, `Superseded`,
-  `Deprecated`. ADRs are append-only: a superseded/rejected ADR is left in
-  place, not deleted or rewritten; link forward/back (`Amends:` /
-  `Amended by:`, `Superseded by:`).
+- ADRs are append-only: a rejected/superseded/deprecated ADR is left in place,
+  not deleted or rewritten.
 - Accepting/rejecting an ADR is just flipping `Status:` in place — no new file.
+- Only include the cross-link fields that apply — omit `Amends:`/`Amended
+  by:`/`Supersedes:`/`Superseded by:` entirely when unused, rather than
+  leaving them blank.
 - A bug found **after** this ADR is `Accepted` and its Plan is `Done`? That's
   not a new/amending ADR by default — see the `decision-trail-correction`
   skill for the lighter, explicitly user-demanded patch path.
+
+## Status vocabulary and transitions
+
+| From | To | When | Requires |
+| --- | --- | --- | --- |
+| Proposed | Accepted | Both hard gates below pass | — |
+| Proposed | Rejected | Considered, turned down before acceptance | — |
+| Accepted | Superseded | A later ADR **fully replaces** this decision | The new ADR carries `Supersedes:` back to this one; this one gets `Superseded by:` |
+| Accepted | Deprecated | Decision no longer applies (e.g. what it governed was removed), but nothing replaces it | Optional one-line reason appended to Consequences; no `Superseded by:` needed |
+
+`Rejected`, `Superseded`, and `Deprecated` are **terminal** — never transition
+further. A change of mind about any of them is always a **new** ADR, never a
+reopening of the old one (append-only).
+
+Use `Amends:`/`Amended by:` (not a status change) when a later ADR only
+**refines or extends** this one's decision without reversing it — the amended
+ADR's own `Status` doesn't change, it just gains an `Amended by:` link.
+Reserve `Supersedes:`/`Superseded by:` (paired with flipping `Status:
+Superseded`) for when a later ADR makes this one's decision obsolete outright.
+
+**Heading tracks status.** While `Status: Proposed`, the decision section is
+headed `## Proposed decision`; the moment `Status` flips to `Accepted`, rename
+the heading to `## Decision` in the same edit. Status and heading always move
+together — if you ever find them disagreeing, treat it as a bug to fix on
+sight, not a stylistic detail.
 
 ## Two hard gates (do not skip)
 
