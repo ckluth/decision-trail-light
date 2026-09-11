@@ -61,7 +61,9 @@ a straightforward call. Rename this heading to "## Decision" the moment
 | --- | --- | --- |
 | — | — | — |
 
-(Use "None." in place of the table when there are no open questions.)
+(Use "None." in place of the table when there are no open questions. Rename
+this heading to "## Resolved Questions" the moment every row is resolved —
+see "Heading tracks resolution" below.)
 ```
 
 - **Title line and filename slot must agree** (`ADR-03: ...` lives in
@@ -101,6 +103,15 @@ the heading to `## Decision` in the same edit. Status and heading always move
 together — if you ever find them disagreeing, treat it as a bug to fix on
 sight, not a stylistic detail.
 
+**Heading tracks resolution.** While the "Open Questions" table has any
+unresolved row, the section is headed `## Open Questions`; the moment every
+row's `Status` is marked resolved (each folded into Context/Decision/
+Consequences per the "Open-questions gate" below), rename the heading to
+`## Resolved Questions` in the same edit. This is independent of the ADR's
+own `Status` field — an ADR may have all questions resolved yet still sit at
+`Status: Proposed` by choice; the section heading tracks the questions'
+resolution, not the ADR's acceptance.
+
 ## Two hard gates (do not skip)
 
 1. **Status-flip gate.** An ADR may stay `Proposed` indefinitely if nothing
@@ -109,10 +120,11 @@ sight, not a stylistic detail.
    ADR that assumes it), flip it to `Accepted` **first**. Never proceed while
    the governing ADR is still `Proposed`.
 2. **Open-questions gate.** Nothing may be built on an ADR (Plan, amending
-   ADR, implementation) while its "Open Questions" table has any unresolved
-   row. Walk each open question with the user one at a time, fold the
-   resolution into Context/Decision/Consequences, mark it resolved, only then
-   flip `Status` to `Accepted`.
+   ADR, implementation) while its "Open Questions"/"Resolved Questions" table
+   has any unresolved row. Walk each open question with the user one at a
+   time, fold the resolution into Context/Decision/Consequences, mark it
+   resolved, rename the section heading to `## Resolved Questions` once every
+   row is resolved, and only then flip `Status` to `Accepted`.
 
 ## Confirmation guard
 
